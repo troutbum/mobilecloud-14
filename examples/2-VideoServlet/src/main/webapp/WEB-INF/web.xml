@@ -27,6 +27,22 @@
         <servlet-name>HtmlVideoServlet</servlet-name>
         <servlet-class>org.magnum.mobilecloud.video.servlet.HtmlVideoServlet</servlet-class>
     </servlet>
+    
+    <servlet>
+        <servlet-name>EchoServlet</servlet-name>
+        <servlet-class>org.magnum.mobilecloud.video.servlet.EchoServlet</servlet-class>
+    </servlet>
+    
+     <!-- [ADDED 1-SimpleServlet] this set of directives tells the web application container which
+         requests should be routed to our servlet. In this case, any request
+         to the path '/echo' will be routed to the servlet. You can use wildcards
+         for path matching. For example, '/echo/**' would match any sub path of
+         '/echo/', such as '/echo/foo' and '/echo/bar' -->
+    <servlet-mapping>
+        <servlet-name>EchoServlet</servlet-name>
+        <url-pattern>/echo</url-pattern>
+        <!-- http://localhost:8080/echo -->
+    </servlet-mapping>
 
     <!-- this set of directives tells the web application container which
          requests should be routed to our servlet. In this case, any request
