@@ -56,7 +56,8 @@ public class VideoServlet extends HttpServlet // Servlets should inherit HttpSer
 			
 			// For each video, write its name and URL into the HTTP
 			// response body
-			sendToClient.write(v.getName() + " : " + v.getUrl() + "\n");
+			sendToClient.write(v.getName() + " : " + v.getUrl() + 
+								" : " + v.getDuration() + "\n");
 		}
 
 	}
