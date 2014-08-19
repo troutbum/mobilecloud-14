@@ -5,9 +5,7 @@ package org.magnum.dataup;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import org.magnum.dataup.model.Video;
-//import org.magnum.dataup.VideoFileManager;
 
-// import org.magnum.mobilecloud.video.client.VideoSvcApi;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,8 +15,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class MyVideoController {
-
-	
 	
 	// An in-memory list that the servlet uses to store the
 	// videos that are sent to it by clients
@@ -27,20 +23,20 @@ public class MyVideoController {
 	// One way to generate a unique ID for each video is to 
 	// use an AtomicLong similar to this:
 	
-	private static final AtomicLong currentId = new AtomicLong(0L);
-	private Map<Long,Video> videos = new HashMap<Long, Video>();
-
-	public Video save(Video entity) {
-		checkAndSetId(entity);
-		videos.put(entity.getId(), entity);
-		return entity;
-	}
-
-	private void checkAndSetId(Video entity) {
-		if(entity.getId() == 0){
-			entity.setId(currentId.incrementAndGet());
-		}
-	}
+//	private static final AtomicLong currentId = new AtomicLong(0L);
+//	private Map<Long,Video> videos = new HashMap<Long, Video>();
+//
+//	public Video save(Video entity) {
+//		checkAndSetId(entity);
+//		videos.put(entity.getId(), entity);
+//		return entity;
+//	}
+//
+//	private void checkAndSetId(Video entity) {
+//		if(entity.getId() == 0){
+//			entity.setId(currentId.incrementAndGet());
+//		}
+//	}
 	
 	// Receives GET requests to /video and returns the current
 	// list of videos in memory. Spring automatically converts
@@ -48,7 +44,8 @@ public class MyVideoController {
 	// annotation.
 	@RequestMapping(value=VIDEO_SVC_PATH, method=RequestMethod.GET)
 	public @ResponseBody List<Video> getVideoList(){
-		return videos.values();
+//		return videos.values();
+		return videos;
 	}
 	
 
