@@ -18,9 +18,39 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 public class MyVideoController {
 
+	
+	
 	// An in-memory list that the servlet uses to store the
 	// videos that are sent to it by clients
 	private List<Video> videos = new CopyOnWriteArrayList<Video>();
+	
+	// One way to generate a unique ID for each video is to 
+	// use an AtomicLong similar to this:
+	
+	private static final AtomicLong currentId = new AtomicLong(0L);
+	private Map<Long,Video> videos = new HashMap<Long, Video>();
+
+	public Video save(Video entity) {
+		checkAndSetId(entity);
+		videos.put(entity.getId(), entity);
+		return entity;
+	}
+
+	private void checkAndSetId(Video entity) {
+		if(entity.getId() == 0){
+			entity.setId(currentId.incrementAndGet());
+		}
+	}
+	
+	// Receives GET requests to /video and returns the current
+	// list of videos in memory. Spring automatically converts
+	// the list of videos to JSON because of the @ResponseBody
+	// annotation.
+	@RequestMapping(value=VIDEO_SVC_PATH, method=RequestMethod.GET)
+	public @ResponseBody List<Video> getVideoList(){
+		return videos.values();
+	}
+	
 
 	//
     //	VideoFileManager manager = VideoFileManager.get();
@@ -45,12 +75,5 @@ public class MyVideoController {
 		return videos.add(v);
 	}
 	
-	// Receives GET requests to /video and returns the current
-	// list of videos in memory. Spring automatically converts
-	// the list of videos to JSON because of the @ResponseBody
-	// annotation.
-	@RequestMapping(value=VIDEO_SVC_PATH, method=RequestMethod.GET)
-	public @ResponseBody List<Video> getVideoList(){
-		return videos;
-	}
+
 }
