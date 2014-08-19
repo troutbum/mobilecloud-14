@@ -5,6 +5,7 @@ package org.magnum.dataup;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import org.magnum.dataup.model.Video;
+//import org.magnum.dataup.VideoFileManager;
 
 // import org.magnum.mobilecloud.video.client.VideoSvcApi;
 import org.springframework.stereotype.Controller;
@@ -13,12 +14,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+
 @Controller
 public class MyVideoController {
 
 	// An in-memory list that the servlet uses to store the
 	// videos that are sent to it by clients
 	private List<Video> videos = new CopyOnWriteArrayList<Video>();
+
+	//
+    //	VideoFileManager manager = VideoFileManager.get();
 
 	// The VIDEO_SVC_PATH is set to "/video" in the VideoSvcApi
 	// interface. We use this constant to ensure that the 
