@@ -2,61 +2,77 @@
 
 package org.magnum.dataup;
 
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
-import org.magnum.dataup.model.Video;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.magnum.dataup.model.Video;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 
 @Controller
 public class MyVideoController {
 	
-	// An in-memory list that the servlet uses to store the
+	// An in-memory database (HashMap object) that the servlet uses to store the
 	// videos that are sent to it by clients
-	private List<Video> videos = new CopyOnWriteArrayList<Video>();
+
+	// One way to generate a unique ID for each video is to use an AtomicLong:
+	private static final AtomicLong currentId = new AtomicLong(0L);
 	
-	// One way to generate a unique ID for each video is to 
-	// use an AtomicLong similar to this:
+	// Create database object for videos
+	private Map<Long,Video> videos = new HashMap<Long, Video>();
+
+	// Method for saving video to database
+	public Video save(Video entity) {
+		checkAndSetId(entity);
+		videos.put(entity.getId(), entity);
+		return entity;
+	}
+	// Method to check if ID exists, if not generate one
+	private void checkAndSetId(Video entity) {
+		if(entity.getId() == 0){
+			entity.setId(currentId.incrementAndGet());
+		}
+	}
+
+	// Method to generate a data url for a video
+	private String createDataUrl(long videoId){
+		String url = getUrlBaseForLocalServer() + "/video/" + videoId + "/data";
+		return url;
+	}
+	//	Figure out the address of your server 
+	private String getUrlBaseForLocalServer() {
+		HttpServletRequest request = 
+				((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+		String base = 
+				"http://"+request.getServerName() 
+				+ ((request.getServerPort() != 80) ? ":"+request.getServerPort() : "");
+		return base;
+	}
 	
-//	private static final AtomicLong currentId = new AtomicLong(0L);
-//	private Map<Long,Video> videos = new HashMap<Long, Video>();
-//
-//	public Video save(Video entity) {
-//		checkAndSetId(entity);
-//		videos.put(entity.getId(), entity);
-//		return entity;
-//	}
-//
-//	private void checkAndSetId(Video entity) {
-//		if(entity.getId() == 0){
-//			entity.setId(currentId.incrementAndGet());
-//		}
-//	}
+	// The VIDEO_SVC_PATH is set to "/video" in the VideoSvcApi interface.
+	public static final String VIDEO_SVC_PATH = "/video";
 	
 	// Receives GET requests to /video and returns the current
 	// list of videos in memory. Spring automatically converts
 	// the list of videos to JSON because of the @ResponseBody
 	// annotation.
 	@RequestMapping(value=VIDEO_SVC_PATH, method=RequestMethod.GET)
-	public @ResponseBody List<Video> getVideoList(){
-//		return videos.values();
-		return videos;
+	public @ResponseBody Collection<Video> getVideoList(){
+		return videos.values();
+		//		return videos;
 	}
 	
 
-	//
-    //	VideoFileManager manager = VideoFileManager.get();
-
-	// The VIDEO_SVC_PATH is set to "/video" in the VideoSvcApi
-	// interface. We use this constant to ensure that the 
-	// client and service paths for the VideoSvc are always
-	// in synch.
-	public static final String VIDEO_SVC_PATH = "/video";
 	
 	// Receives POST requests to /video and converts the HTTP
 	// request body, which should contain json, into a Video
@@ -67,9 +83,14 @@ public class MyVideoController {
 	// @ResponseBody annotation tells Spring to convert the
 	// return value from the method back into JSON and put
 	// it into the body of the HTTP response to the client.
+	
 	@RequestMapping(value=VIDEO_SVC_PATH, method=RequestMethod.POST)
-	public @ResponseBody boolean addVideo(@RequestBody Video v){
-		return videos.add(v);
+	public @ResponseBody Video addVideo(@RequestBody Video v){
+		save(v);
+		// add dataUrl to object so client can upload file here
+		v.setDataUrl(createDataUrl(v.getId()));
+		
+		return v;
 	}
 	
 
