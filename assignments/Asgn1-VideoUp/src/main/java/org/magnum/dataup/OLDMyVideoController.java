@@ -10,8 +10,6 @@ import java.util.concurrent.atomic.AtomicLong;
 import javax.servlet.http.HttpServletRequest;
 
 import org.magnum.dataup.model.Video;
-import org.magnum.dataup.model.VideoStatus;
-import org.magnum.dataup.model.VideoStatus.VideoState;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-import org.springframework.web.multipart.MultipartFile;
 
 
 @Controller
@@ -65,16 +62,19 @@ public class MyVideoController {
 	// The VIDEO_SVC_PATH is set to "/video" in the VideoSvcApi interface.
 	public static final String VIDEO_SVC_PATH = "/video";
 	
-	// Controller METHOD1 - Receives GET requests to VIDEO_SVC_PATH
-	// and returns the current list of videos in memory. Spring automatically converts
+	// Receives GET requests to /video and returns the current
+	// list of videos in memory. Spring automatically converts
 	// the list of videos to JSON because of the @ResponseBody
 	// annotation.
 	@RequestMapping(value=VIDEO_SVC_PATH, method=RequestMethod.GET)
 	public @ResponseBody Collection<Video> getVideoList(){
 		return videos.values();
+		//		return videos;
 	}
 	
-	// Controller METHOD2 - Receives POST requests to /video and converts the HTTP
+
+	
+	// Receives POST requests to /video and converts the HTTP
 	// request body, which should contain json, into a Video
 	// object before adding it to the list. The @RequestBody
 	// annotation on the Video parameter is what tells Spring
@@ -88,57 +88,10 @@ public class MyVideoController {
 	public @ResponseBody Video addVideo(@RequestBody Video v){
 		save(v);
 		// add dataUrl to object so client can upload file here
-		v.setDataUrl(createDataUrl(v.getId()));	
+		v.setDataUrl(createDataUrl(v.getId()));
+		
 		return v;
 	}
 	
-	// Controller METHOD3 - Receives POST requests
-	// to save client's video data to a file on the server
-	
-	public static final String DATA_PARAMETER = "data";
-	public static final Long ID_PARAMETER = "id";
-	public static final String VIDEO_DATA_PATH = VIDEO_SVC_PATH + "/{id}/data";
-	
-	private VideoFileManager videoDataMgr;
-	
-	@PathVar("id") Long sentId
-	@RequestParam("data") MultipartFile videoData
-	@RequestMapping(value=VIDEO_DATA_PATH, method=RequestMethod.POST )
-	public @ResponseBody VideoStatus setVideoData(@RequestBody Video v, MultipartFile videoData) 
-			throws IOException {
-		
-		
-		if (sentId does not exist in in hashMap.id v.getId()) {
-			//response code set to 404
-			response.setStatus();
-		}
-		else {
-			// replace video with v in next line?
-			videoDataMgr.saveVideoData(video, videoData.getInputStream());
-		}
-		return VideoState.READY;
-   }
 
-	// Controller METHOD4 - Receives GET requests
-	// to save client's video data to a file on the server
-	@RequestMapping(value=VIDEO_DATA_PATH, method=RequestMethod.GET )
-	public @ResponseBody Video getVideoData(@RequestBody Video v, MultipartFile videoData) 
-	
-	- Any Controller method can take an HttpServletRequest or HttpServletResponse as parameters to 
-  gain low-level access/control over the HTTP messages. Spring will automatically fill in these
-  parameters when your Controller's method is invoked:
-```java
-        ...
-        @RequestMapping("/some/path/{id}")
-        public MyObject doSomething(
-                   @PathVariable("id") String id, 
-                   @RequestParam("something") String data,
-                   HttpServletResponse response) {
-         
-            // Maybe you want to set the status code with the response
-            // or write some binary data to an OutputStream obtained from
-            // the HttpServletResponse object
-            ....       
-        }
-	
 }
