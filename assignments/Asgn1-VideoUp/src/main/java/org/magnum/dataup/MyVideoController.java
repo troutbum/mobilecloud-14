@@ -2,20 +2,24 @@
 
 package org.magnum.dataup;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.magnum.dataup.model.Video;
 import org.magnum.dataup.model.VideoStatus;
 import org.magnum.dataup.model.VideoStatus.VideoState;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -94,23 +98,31 @@ public class MyVideoController {
 	
 	// Controller METHOD3 - Receives POST requests
 	// to save client's video data to a file on the server
-	
-	public static final String DATA_PARAMETER = "data";
-	public static final Long ID_PARAMETER = "id";
-	public static final String VIDEO_DATA_PATH = VIDEO_SVC_PATH + "/{id}/data";
-	
+		
 	private VideoFileManager videoDataMgr;
 	
-	@PathVar("id") Long sentId
-	@RequestParam("data") MultipartFile videoData
-	@RequestMapping(value=VIDEO_DATA_PATH, method=RequestMethod.POST )
-	public @ResponseBody VideoStatus setVideoData(@RequestBody Video v, MultipartFile videoData) 
+	// My first attempt
+	@RequestMapping(value="/video/{id}/data", method=RequestMethod.POST )
+	public @ResponseBody VideoStatus setVideoData(
+			@PathVariable("id") long id,
+			@RequestParam("data") MultipartFile videoData,		
+		    HttpServletResponse response) 
 			throws IOException {
+
+//		try {
+//			videoDataMgr = VideoFileManager.get();
+//		}catch (IOException e) {
+//			e.printStackTrace();
+//		}
 		
+		if (videoDataMgr.hasVideoData(Video v) == TRUE) {
+			
+		}
 		
 		if (sentId does not exist in in hashMap.id v.getId()) {
 			//response code set to 404
-			response.setStatus();
+			response.setStatus(0);
+			response.sendError(404);
 		}
 		else {
 			// replace video with v in next line?
@@ -124,11 +136,9 @@ public class MyVideoController {
 	@RequestMapping(value=VIDEO_DATA_PATH, method=RequestMethod.GET )
 	public @ResponseBody Video getVideoData(@RequestBody Video v, MultipartFile videoData) 
 	
-	- Any Controller method can take an HttpServletRequest or HttpServletResponse as parameters to 
-  gain low-level access/control over the HTTP messages. Spring will automatically fill in these
-  parameters when your Controller's method is invoked:
-```java
-        ...
+//	Any Controller method can take an HttpServletRequest or HttpServletResponse as parameters to 
+//  gain low-level access/control over the HTTP messages. Spring will automatically fill in these
+//  parameters when your Controller's method is invoked:
         @RequestMapping("/some/path/{id}")
         public MyObject doSomething(
                    @PathVariable("id") String id, 
