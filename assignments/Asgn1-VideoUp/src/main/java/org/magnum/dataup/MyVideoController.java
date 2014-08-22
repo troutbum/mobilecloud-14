@@ -1,4 +1,6 @@
-// Derived from Example 3-VideoControllerAndRetrofit
+// Assignment 1
+// Programming Cloud Services for Android Handheld Systems
+// August 2014
 
 package org.magnum.dataup;
 
@@ -100,7 +102,6 @@ public class MyVideoController {
 		
 	private VideoFileManager videoDataMgr;
 	
-	// My first attempt
 	@RequestMapping(value="/video/{id}/data", method=RequestMethod.POST )
 	public @ResponseBody VideoState setVideoData(
 			@PathVariable("id") long id,
@@ -114,14 +115,47 @@ public class MyVideoController {
 			e.printStackTrace();
 		}
 	
-			// replace video with v in next line?
-		Video v =(Video)videos.get(id);
+		// lookup Video object using ID sent by client
+		// and then store binary video data into the file system
+		Video v =(Video)videos.get(id);	
 		videoDataMgr.saveVideoData(v, videoData.getInputStream());
 		
-
 		return VideoState.READY;
    }
 
+	// Controller METHOD4 - Receives GET requests
+	// to save client's video data to a file on the server
+	@RequestMapping(value="/video/{id}/data", method=RequestMethod.GET )
+	public void getVideoData(
+			@PathVariable("id") long id,
+			HttpServletResponse response)
+			//@ResponseParam("data") MultipartFile videoData,		
+		   //   
+		    throws IOException {
+			
+		Video v =(Video)videos.get(id);
+		videoDataMgr.copyVideoData(v, response.getOutputStream());
+		
+		return;
+		
+	}
+	
+//	Any Controller method can take an HttpServletRequest or HttpServletResponse as parameters to 
+//  gain low-level access/control over the HTTP messages. Spring will automatically fill in these
+//  parameters when your Controller's method is invoked:
+//        @RequestMapping("//path/{id}")
+//        public MyObject doSomething(
+//                   @PathVariable("id") String id, 
+//                   @RequestParam("something") String data,
+//                   HttpServletResponse response) {
+//         
+//            // Maybe you want to set the status code with the response
+//            // or write some binary data to an OutputStream obtained from
+//            // the HttpServletResponse object
+//            ....       
+//        }	
+	
+	
 	
 //	// My first attempt
 //	@RequestMapping(value="/video/{id}/data", method=RequestMethod.POST )
@@ -153,24 +187,6 @@ public class MyVideoController {
 //		return VideoState.READY;
 //   }
 //
-//	// Controller METHOD4 - Receives GET requests
-//	// to save client's video data to a file on the server
-//	@RequestMapping(value=VIDEO_DATA_PATH, method=RequestMethod.GET )
-//	public @ResponseBody Video getVideoData(@RequestBody Video v, MultipartFile videoData) 
-//	
-////	Any Controller method can take an HttpServletRequest or HttpServletResponse as parameters to 
-////  gain low-level access/control over the HTTP messages. Spring will automatically fill in these
-////  parameters when your Controller's method is invoked:
-//        @RequestMapping("/some/path/{id}")
-//        public MyObject doSomething(
-//                   @PathVariable("id") String id, 
-//                   @RequestParam("something") String data,
-//                   HttpServletResponse response) {
-//         
-//            // Maybe you want to set the status code with the response
-//            // or write some binary data to an OutputStream obtained from
-//            // the HttpServletResponse object
-//            ....       
-//        }
+
 	
 }
