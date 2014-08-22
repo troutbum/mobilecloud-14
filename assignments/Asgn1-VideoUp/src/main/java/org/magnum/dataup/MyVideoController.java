@@ -12,7 +12,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.magnum.dataup.model.Video;
-import org.magnum.dataup.model.VideoStatus;
 import org.magnum.dataup.model.VideoStatus.VideoState;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -103,52 +102,75 @@ public class MyVideoController {
 	
 	// My first attempt
 	@RequestMapping(value="/video/{id}/data", method=RequestMethod.POST )
-	public @ResponseBody VideoStatus setVideoData(
+	public @ResponseBody VideoState setVideoData(
 			@PathVariable("id") long id,
 			@RequestParam("data") MultipartFile videoData,		
 		    HttpServletResponse response) 
 			throws IOException {
 
-//		try {
-//			videoDataMgr = VideoFileManager.get();
-//		}catch (IOException e) {
-//			e.printStackTrace();
-//		}
-		
-		if (videoDataMgr.hasVideoData(Video v) == TRUE) {
-			
+		try {
+			videoDataMgr = VideoFileManager.get();
+		}catch (IOException e) {
+			e.printStackTrace();
 		}
-		
-		if (sentId does not exist in in hashMap.id v.getId()) {
-			//response code set to 404
-			response.setStatus(0);
-			response.sendError(404);
-		}
-		else {
+	
 			// replace video with v in next line?
-			videoDataMgr.saveVideoData(video, videoData.getInputStream());
-		}
+		Video v =(Video)videos.get(id);
+		videoDataMgr.saveVideoData(v, videoData.getInputStream());
+		
+
 		return VideoState.READY;
    }
 
-	// Controller METHOD4 - Receives GET requests
-	// to save client's video data to a file on the server
-	@RequestMapping(value=VIDEO_DATA_PATH, method=RequestMethod.GET )
-	public @ResponseBody Video getVideoData(@RequestBody Video v, MultipartFile videoData) 
 	
-//	Any Controller method can take an HttpServletRequest or HttpServletResponse as parameters to 
-//  gain low-level access/control over the HTTP messages. Spring will automatically fill in these
-//  parameters when your Controller's method is invoked:
-        @RequestMapping("/some/path/{id}")
-        public MyObject doSomething(
-                   @PathVariable("id") String id, 
-                   @RequestParam("something") String data,
-                   HttpServletResponse response) {
-         
-            // Maybe you want to set the status code with the response
-            // or write some binary data to an OutputStream obtained from
-            // the HttpServletResponse object
-            ....       
-        }
+//	// My first attempt
+//	@RequestMapping(value="/video/{id}/data", method=RequestMethod.POST )
+//	public @ResponseBody VideoStatus setVideoData(
+//			@PathVariable("id") long id,
+//			@RequestParam("data") MultipartFile videoData,		
+//		    HttpServletResponse response) 
+//			throws IOException {
+//
+////		try {
+////			videoDataMgr = VideoFileManager.get();
+////		}catch (IOException e) {
+////			e.printStackTrace();
+////		}
+//		
+//		if (videoDataMgr.hasVideoData(Video v) == TRUE) {
+//			
+//		}
+//		
+//		if (sentId does not exist in in hashMap.id v.getId()) {
+//			//response code set to 404
+//			response.setStatus(0);
+//			response.sendError(404);
+//		}
+//		else {
+//			// replace video with v in next line?
+//			videoDataMgr.saveVideoData(video, videoData.getInputStream());
+//		}
+//		return VideoState.READY;
+//   }
+//
+//	// Controller METHOD4 - Receives GET requests
+//	// to save client's video data to a file on the server
+//	@RequestMapping(value=VIDEO_DATA_PATH, method=RequestMethod.GET )
+//	public @ResponseBody Video getVideoData(@RequestBody Video v, MultipartFile videoData) 
+//	
+////	Any Controller method can take an HttpServletRequest or HttpServletResponse as parameters to 
+////  gain low-level access/control over the HTTP messages. Spring will automatically fill in these
+////  parameters when your Controller's method is invoked:
+//        @RequestMapping("/some/path/{id}")
+//        public MyObject doSomething(
+//                   @PathVariable("id") String id, 
+//                   @RequestParam("something") String data,
+//                   HttpServletResponse response) {
+//         
+//            // Maybe you want to set the status code with the response
+//            // or write some binary data to an OutputStream obtained from
+//            // the HttpServletResponse object
+//            ....       
+//        }
 	
 }
