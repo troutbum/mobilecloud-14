@@ -103,7 +103,7 @@ public class MyVideoController {
 	private VideoFileManager videoDataMgr;
 	
 	@RequestMapping(value="/video/{id}/data", method=RequestMethod.POST )
-	public @ResponseBody VideoState setVideoData(
+	public @ResponseBody VideoState setVideoData(	
 			@PathVariable("id") long id,
 			@RequestParam("data") MultipartFile videoData,		
 		    HttpServletResponse response) 
@@ -111,33 +111,38 @@ public class MyVideoController {
 
 		try {
 			videoDataMgr = VideoFileManager.get();
-		}catch (IOException e) {
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	
 		// lookup Video object using ID sent by client
 		// and then store binary video data into the file system
 		Video v =(Video)videos.get(id);	
-		videoDataMgr.saveVideoData(v, videoData.getInputStream());
+		try {
+			videoDataMgr.saveVideoData(v, videoData.getInputStream());
+		} catch (Exception ee) {
+			response.sendError(404);
+		}
 		
 		return VideoState.READY;
    }
 
 	// Controller METHOD4 - Receives GET requests
-	// to save client's video data to a file on the server
+	// to serve up binary video data from the server
 	@RequestMapping(value="/video/{id}/data", method=RequestMethod.GET )
 	public void getVideoData(
 			@PathVariable("id") long id,
 			HttpServletResponse response)
-			//@ResponseParam("data") MultipartFile videoData,		
-		   //   
 		    throws IOException {
-			
-		Video v =(Video)videos.get(id);
-		videoDataMgr.copyVideoData(v, response.getOutputStream());
 		
-		return;
+		try {
+			Video v =(Video)videos.get(id);
+			videoDataMgr.copyVideoData(v, response.getOutputStream());
+		} catch (Exception ee) {
+			response.sendError(404);
+		}
 		
+		return;	
 	}
 	
 //	Any Controller method can take an HttpServletRequest or HttpServletResponse as parameters to 
