@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.magnum.dataup.model.Video;
+import org.magnum.dataup.model.VideoStatus;
 import org.magnum.dataup.model.VideoStatus.VideoState;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -103,7 +104,7 @@ public class MyVideoController {
 	private VideoFileManager videoDataMgr;
 	
 	@RequestMapping(value="/video/{id}/data", method=RequestMethod.POST )
-	public @ResponseBody VideoState setVideoData(	
+	public @ResponseBody VideoStatus setVideoData(	
 			@PathVariable("id") long id,
 			@RequestParam("data") MultipartFile videoData,		
 		    HttpServletResponse response) 
@@ -124,7 +125,7 @@ public class MyVideoController {
 			response.sendError(404);
 		}
 		
-		return VideoState.READY;
+		return new VideoStatus(VideoState.READY);
    }
 
 	// Controller METHOD4 - Receives GET requests
@@ -143,55 +144,5 @@ public class MyVideoController {
 		}
 		
 		return;	
-	}
-	
-//	Any Controller method can take an HttpServletRequest or HttpServletResponse as parameters to 
-//  gain low-level access/control over the HTTP messages. Spring will automatically fill in these
-//  parameters when your Controller's method is invoked:
-//        @RequestMapping("//path/{id}")
-//        public MyObject doSomething(
-//                   @PathVariable("id") String id, 
-//                   @RequestParam("something") String data,
-//                   HttpServletResponse response) {
-//         
-//            // Maybe you want to set the status code with the response
-//            // or write some binary data to an OutputStream obtained from
-//            // the HttpServletResponse object
-//            ....       
-//        }	
-	
-	
-	
-//	// My first attempt
-//	@RequestMapping(value="/video/{id}/data", method=RequestMethod.POST )
-//	public @ResponseBody VideoStatus setVideoData(
-//			@PathVariable("id") long id,
-//			@RequestParam("data") MultipartFile videoData,		
-//		    HttpServletResponse response) 
-//			throws IOException {
-//
-////		try {
-////			videoDataMgr = VideoFileManager.get();
-////		}catch (IOException e) {
-////			e.printStackTrace();
-////		}
-//		
-//		if (videoDataMgr.hasVideoData(Video v) == TRUE) {
-//			
-//		}
-//		
-//		if (sentId does not exist in in hashMap.id v.getId()) {
-//			//response code set to 404
-//			response.setStatus(0);
-//			response.sendError(404);
-//		}
-//		else {
-//			// replace video with v in next line?
-//			videoDataMgr.saveVideoData(video, videoData.getInputStream());
-//		}
-//		return VideoState.READY;
-//   }
-//
-
-	
+	}	
 }
